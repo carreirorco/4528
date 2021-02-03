@@ -3,6 +3,40 @@
   become: yes
   become_user: root
   become_method: sudo
+  pre_tasks:
+    - name: Instalando pacotes de dependencias para o curso
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+        - unzip
+        - python3
+        - python3-pip
+        - software-properties-common
+        - vim
+        - python-netaddr
+        - python3-netaddr
+        - software-properties-common
+        update_cache: yes
+
+    - name: Criando o arquivo get-pip.py
+      copy:
+        src: files/get-pip.py
+        dest: /tmp
+        mode: 0644
+
+    - name: Atualiza o pip com Python 3
+      shell: python3 get-pip.py
+      args:
+        chdir: /tmp
+
+    - name: Atualiza o pip com Python 2
+      shell: python2 get-pip.py
+      args:
+        chdir: /tmp
+
   tasks:
     - name: Garantindo /etc/hosts
       lineinfile:
@@ -31,26 +65,17 @@
         path: /home/vagrant/.bashrc
         line: 'sudo su - suporte'
 
-    - name: Instalando pacotes de dependencias para o curso
-      apt:
-        name: "{{ packages }}"
-        state: present
-        update_cache: yes
-      vars:
-        packages:
-        - unzip
-        - python3
-        - python3-pip
-        - software-properties-common
-        update_cache: yes
-
-    - name: Criando o arquivo get-pip.py
-      copy:
-        src: files/get-pip.py
-        dest: /tmp
-        mode: 0644
-
-    - name: Atualiza o pip com Python 3
-      shell: python3 get-pip.py
-      args:
-        chdir: /tmp
+  roles:
+    - role: roles/ansible_collections/community/zabbix/roles/zabbix_agent
+      zabbix_agent_version: 4.4
+      zabbix_agent_server: localhost
+      zabbix_agent_serveractive: localhost
+      zabbix_url: http://zabbix.dexter.com.br
+      zabbix_api_use: true # use zabbix_api_create_hosts and/or zabbix_api_create_hostgroup from 0.8.0
+      zabbix_api_user: Admin
+      zabbix_api_pass: zabbix
+      zabbix_create_host: present
+      zabbix_host_groups:
+       - Linux Servers
+      zabbix_link_templates:
+       - Template OS Linux
