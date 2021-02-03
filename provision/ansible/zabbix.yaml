@@ -120,8 +120,9 @@
       zabbix_php_fpm_dir: /etc/php/7.2/fpm/pool.d
 
     - role: roles/ansible_collections/community/zabbix/roles/zabbix_agent
-      zabbix_agent_server: zabbix.dexter.com.br
-      zabbix_agent_serveractive: zabbix.dexter.com.br
+      zabbix_agent_version: 4.4
+      zabbix_agent_server: localhost
+      zabbix_agent_serveractive: localhost
       zabbix_url: http://zabbix.dexter.com.br
       zabbix_api_use: true # use zabbix_api_create_hosts and/or zabbix_api_create_hostgroup from 0.8.0
       zabbix_api_user: Admin
