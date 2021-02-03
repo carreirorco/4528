@@ -20,6 +20,9 @@ Vagrant.require_version '>= 2.0.0'
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Iteracao com os servidores do ambiente
   env.each do |env|
+    config.vbguest.no_install  = true
+    config.vbguest.auto_update = false
+    config.vbguest.no_remote   = true
     config.vm.define env['name'] do |srv|
       srv.vm.box      = env['box']
       srv.vm.hostname = env['hostname']
