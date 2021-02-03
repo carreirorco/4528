@@ -19,6 +19,7 @@
         - software-properties-common
         - python3-pymysql
         - python-pymysql
+        - php-fpm
         update_cache: yes
 
     - name: Criando o arquivo get-pip.py
@@ -64,21 +65,16 @@
         path: /home/vagrant/.bashrc
         line: 'sudo su - suporte'
 
+    - name: Remover vhosts default
+      file:
+        path: /etc/apache2/sites-enabled/{{ item }}.conf
+        state: absent
+      with_items:
+        - vhost
+        - 000-default
+
   roles:
     - role: roles/geerlingguy.apache
-    - role: roles/geerlingguy.php
-      php_default_version_debian: "7.2"
-      php_fpm_state: started
-      php_fpm_enabled_on_boot: true
-      php_fpm_handler_state: restarted
-      php_fpm_listen: "127.0.0.1:9000"
-      php_fpm_listen_allowed_clients: "127.0.0.1"
-      php_fpm_pm_max_children: 50
-      php_fpm_pm_start_servers: 5
-      php_fpm_pm_min_spare_servers: 5
-      php_fpm_pm_max_spare_servers: 5
-      php_use_managed_ini: true
-
     - role: roles/geerlingguy.mysql
       mysql_root_password: '4linux-root!@#'
       mysql_databases:
@@ -105,11 +101,18 @@
     - role: roles/ansible_collections/community/zabbix/roles/zabbix_web
       zabbix_web_version: 4.4
       zabbix_url: zabbix.dexter.com.br
+      zabbix_server_database: mysql
+      zabbix_server_database_long: mysql
+      zabbix_server_dbhost: localhost
+      zabbix_server_dbport: 3306
+      zabbix_server_dbname: zabbix
+      zabbix_server_dbuser: zabbix
+      zabbix_server_dbpassword: 4linux
       zabbix_timezone: America/Sao_Paulo
       zabbix_web_max_execution_time: 300
-      zabbix_web_memory_limit: 128
-      zabbix_web_post_max_size: 16
-      zabbix_web_upload_max_filesize: 2
+      zabbix_web_memory_limit: 128M
+      zabbix_web_post_max_size: 16M
+      zabbix_web_upload_max_filesize: 2M
       zabbix_web_max_input_time: 300
       zabbix_php_version: 7.2
       zabbix_php_fpm_dir: /etc/php/7.2/fpm/pool.d
