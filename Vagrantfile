@@ -46,9 +46,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       config.vm.provision "shell", inline: "cp /vagrant/id_rsa /root/.ssh/id_rsa"
       config.vm.provision "shell", inline: "cp /vagrant/id_rsa.pub /root/.ssh/authorized_keys"
       config.vm.provision "shell", inline: "chmod 600 /root/.ssh/id_rsa"
+      config.vm.provision "shell", inline: "echo 'sudo su -' >> ~/.bashrc"
       #Adicionar condicao para executar esses dois comandos somente na maquina zabbix
-      config.vm.provision "shell", inline: "ansible-galaxy role install -r /vagrant/provision/ansible/requirements.yml -p /vagrant/provision/ansible/roles/"
-      config.vm.provision "shell", inline: "ansible-galaxy collection install -r /vagrant/provision/ansible/requirements.yml -p /vagrant/provision/ansible/roles/"
+      #config.vm.provision "shell", inline: "ansible-galaxy role install -r /vagrant/provision/ansible/requirements.yml -p /vagrant/provision/ansible/roles/"
+      #config.vm.provision "shell", inline: "ansible-galaxy collection install -r /vagrant/provision/ansible/requirements.yml -p /vagrant/provision/ansible/roles/"
     end
   end
 end
