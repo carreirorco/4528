@@ -37,7 +37,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         ansible.become_user        = 'root'
         ansible.compatibility_mode = '2.0'
       end
-      
+
       config.vm.provision "shell", inline: <<-SHELL
      sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
      systemctl restart sshd
@@ -46,7 +46,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       config.vm.provision "shell", inline: "cp /vagrant/id_rsa /root/.ssh/id_rsa"
       config.vm.provision "shell", inline: "cp /vagrant/id_rsa.pub /root/.ssh/authorized_keys"
       config.vm.provision "shell", inline: "chmod 600 /root/.ssh/id_rsa"
-      
+      #Adicionar condicao para executar esses dois comandos somente na maquina zabbix
+      config.vm.provision "shell", inline: "ansible-galaxy role install -r /vagrant/provision/ansible/requirements.yml -p /vagrant/provision/ansible/roles/"
+      config.vm.provision "shell", inline: "ansible-galaxy collection install -r /vagrant/provision/ansible/requirements.yml -p /vagrant/provision/ansible/roles/"
     end
   end
 end
