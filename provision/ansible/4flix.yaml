@@ -2,6 +2,42 @@
   become: yes
   become_user: root
   become_method: sudo
+  pre_tasks:
+    - name: Instalando pacotes de dependencias para o curso
+      yum:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+        - epel-release
+        - python3
+        - python3-pip
+        - python-netaddr
+        - policycoreutils-python
+        - git
+        - wget
+        - vim
+        - net-tools
+        - unzip
+        - java-1.8.0-openjdk
+
+    - name: Criando o arquivo get-pip.py
+      copy:
+        src: files/get-pip.py
+        dest: /tmp
+        mode: 0644
+
+    - name: Atualiza o pip com Python 3
+      shell: python3 get-pip.py
+      args:
+        chdir: /tmp
+
+    - name: Atualiza o pip com Python 2
+      shell: python get-pip.py
+      args:
+        chdir: /tmp
+
   tasks:
     - name: Garantindo /etc/hosts
       lineinfile:
@@ -33,24 +69,6 @@
       lineinfile:
         path: /home/vagrant/.bashrc
         line: 'sudo su - suporte'
-
-    - name: Instalando pacotes de dependencias para o curso
-      yum:
-        name: "{{ packages }}"
-        state: present
-        update_cache: yes
-      vars:
-        packages:
-        - epel-release
-        - python3
-        - python3-pip
-        - policycoreutils-python
-        - git
-        - wget
-        - vim
-        - net-tools
-        - unzip
-        - java-1.8.0-openjdk
 
     - name: Criando diretório apache-jmeter
       synchronize:
@@ -125,17 +143,6 @@
         name: mongodb-org-shell.x86_64
         state: present
 
-    - name: Criando o arquivo get-pip.py
-      copy:
-        src: files/get-pip.py
-        dest: /tmp
-        mode: 0644
-
-    - name: Atualiza o pip com Python 3
-      shell: python3 get-pip.py
-      args:
-        chdir: /tmp
-
     - name: Alterando arquivo do SELinux
       lineinfile:
           path: /etc/selinux/config
@@ -151,3 +158,17 @@
     - name: Parando FirewallD
       command: systemctl stop firewalld
 
+  roles:
+    - role: roles/ansible_collections/community/zabbix/roles/zabbix_agent
+      zabbix_agent_version: 4.4
+      zabbix_agent_server: zabbix.dexter.com.br
+      zabbix_agent_serveractive: zabbix.dexter.com.br
+      zabbix_url: http://zabbix.dexter.com.br
+      zabbix_api_use: true # use zabbix_api_create_hosts and/or zabbix_api_create_hostgroup from 0.8.0
+      zabbix_api_user: Admin
+      zabbix_api_pass: zabbix
+      zabbix_create_host: present
+      zabbix_host_groups:
+       - Linux Servers
+      zabbix_link_templates:
+       - Template OS Linux
