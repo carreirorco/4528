@@ -3,7 +3,7 @@
   box: trombik/ansible-ubuntu-18.04-amd64
   hostname: zabbix.dexter.com.br
   ipaddress: 192.168.99.10
-  memory: 512
+  memory: 1024
   cpus: 1
   provision: provision/ansible/zabbix.yaml
 
