@@ -131,6 +131,6 @@
       zabbix_host_groups:
        - Linux Servers
       zabbix_link_templates:
-       - Template OS Linux
+       - Template OS Linux by Zabbix agent
        - Template App Apache by Zabbix agent
        - Template DB MySQL by Zabbix agent
